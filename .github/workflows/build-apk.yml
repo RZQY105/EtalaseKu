@@ -1,0 +1,47 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Dependencies & Init Capacitor
+        run: |
+          npm install
+          npx cap init "EtalaseKu" "com.supernova.etalaseku" --web-dir=www
+          npx cap add android
+
+      - name: Tambahkan Izin Kamera di AndroidManifest
+        run: |
+          sed -i 's/<uses-permission android:name="android.permission.INTERNET" \/>/<uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>/' android/app/src/main/AndroidManifest.xml
+
+      - name: Sync & Build Debug APK
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK ke GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: EtalaseKu-Android-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
