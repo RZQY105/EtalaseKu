@@ -29,9 +29,9 @@ jobs:
           npx cap init "EtalaseKu" "com.supernova.etalaseku" --web-dir=www
           npx cap add android
 
-      - name: Tambahkan Izin Kamera di AndroidManifest
+      - name: Tambahkan Izin Kamera, Flash & Galeri di AndroidManifest
         run: |
-          sed -i 's/<uses-permission android:name="android.permission.INTERNET" \/>/<uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/<uses-permission android:name="android.permission.INTERNET" \/>/<uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.FLASHLIGHT" \/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" \/>\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" \/>\n    <uses-feature android:name="android.hardware.camera" android:required="false" \/>\n    <uses-feature android:name="android.hardware.camera.flash" android:required="false" \/>/' android/app/src/main/AndroidManifest.xml
 
       - name: Sync & Build Debug APK
         run: |
